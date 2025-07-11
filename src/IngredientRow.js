@@ -1,142 +1,127 @@
-// IngredientRow.js
-import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React from "react";
 
-const IngredientRow = ({
-  ingredient,
+function IngredientRow({
   index,
+  ingredient,
   updateIngredient,
   removeIngredient,
-  unitOptions,
-  categoryOptions,
-  subcategoryOptions,
-  ingredientOptions
-}) => {
-  const [localIngredient, setLocalIngredient] = useState(ingredient || {});
-  const navigate = useNavigate();
-  const location = useLocation();
-  const returnTo = new URLSearchParams(location.search).get("title") || "MainRecipe";
-
-  useEffect(() => {
-    setLocalIngredient(ingredient || {});
-  }, [ingredient]);
-
+  unitOptions = [],
+  categoryOptions = [],
+  subcategoryOptions = {},
+  ingredientOptions = [],
+}) {
   const handleChange = (field, value) => {
-    const updated = { ...localIngredient, [field]: value };
+    const updated = { ...ingredient, [field]: value };
+
     if (field === "category") {
       updated.subcategory = "";
+      updated.ingredient = "";
     }
-    setLocalIngredient(updated);
+
+    if (field === "subcategory") {
+      updated.ingredient = "";
+    }
+
     updateIngredient(index, updated);
   };
 
-  const handleSubrecipeRedirect = () => {
-    const name = localIngredient.ingredient?.trim();
-    if (localIngredient.isSubrecipe && name) {
-      const params = new URLSearchParams({ title: name, returnTo });
-      navigate(`/recipe?${params.toString()}`);
-    }
-  };
-
-  const qty = parseFloat(localIngredient.qty) || 0;
-  const cost = parseFloat(localIngredient.cost) || 0;
-  const lineCost = (qty * cost).toFixed(2);
+  const subcategories = subcategoryOptions[ingredient.category] || [];
 
   const filteredIngredients = ingredientOptions.filter(
-    (item) =>
-      item.category === localIngredient.category &&
-      item.subcategory === localIngredient.subcategory
+    (opt) =>
+      opt.category === ingredient.category &&
+      opt.subcategory === ingredient.subcategory
   );
 
   return (
-    <div className="grid grid-cols-[60px_80px_160px_160px_160px_160px_80px_100px_40px] gap-2 items-center text-sm border-b py-2">
+    <div className="flex items-center gap-2 text-sm py-1 px-1 border-b border-gray-200">
       <input
-        className="px-2 py-1 border rounded"
-        placeholder="Qty"
-        value={localIngredient.qty}
+        type="number"
+        value={ingredient.qty}
         onChange={(e) => handleChange("qty", e.target.value)}
+        className="w-12 px-1 border border-gray-300 rounded text-right"
+        placeholder="Qty"
       />
 
       <select
-        className="px-2 py-1 border rounded bg-white text-sm"
-        value={localIngredient.unit}
+        value={ingredient.unit}
         onChange={(e) => handleChange("unit", e.target.value)}
+        className="w-16 px-1 border border-gray-300 rounded"
       >
         <option value="">Unit</option>
-        {unitOptions.map((unit) => (
-          <option key={unit} value={unit}>{unit}</option>
+        {unitOptions.map((u) => (
+          <option key={u} value={u}>
+            {u}
+          </option>
         ))}
       </select>
 
       <select
-        className="px-2 py-1 border rounded bg-white text-sm"
-        value={localIngredient.category}
+        value={ingredient.category}
         onChange={(e) => handleChange("category", e.target.value)}
+        className="w-28 px-1 border border-gray-300 rounded"
       >
         <option value="">Category</option>
         {categoryOptions.map((cat) => (
-          <option key={cat} value={cat}>{cat}</option>
+          <option key={cat} value={cat}>
+            {cat}
+          </option>
         ))}
       </select>
 
       <select
-        className="px-2 py-1 border rounded bg-white text-sm"
-        value={localIngredient.subcategory}
+        value={ingredient.subcategory}
         onChange={(e) => handleChange("subcategory", e.target.value)}
+        className="w-28 px-1 border border-gray-300 rounded"
       >
         <option value="">Subcategory</option>
-        {(subcategoryOptions[localIngredient.category] || []).map((sub) => (
-          <option key={sub} value={sub}>{sub}</option>
+        {subcategories.map((sub) => (
+          <option key={sub} value={sub}>
+            {sub}
+          </option>
         ))}
       </select>
 
-      <div className="relative">
-        <input
-          className="w-full px-2 py-1 border rounded"
-          placeholder="Ingredient"
-          value={localIngredient.ingredient}
-          list={`ingredient-options-${index}`}
-          onChange={(e) => handleChange("ingredient", e.target.value)}
-          onBlur={handleSubrecipeRedirect}
-        />
-        <datalist id={`ingredient-options-${index}`}>
-          {filteredIngredients.map((item) => (
-            <option key={item.name} value={item.name} />
-          ))}
-        </datalist>
-      </div>
+      <select
+        value={ingredient.ingredient}
+        onChange={(e) => handleChange("ingredient", e.target.value)}
+        className="w-44 px-1 border border-gray-300 rounded"
+      >
+        <option value="">Ingredient</option>
+        {filteredIngredients.map((opt) => (
+          <option key={opt.name} value={opt.name}>
+            {opt.name}
+          </option>
+        ))}
+      </select>
 
       <input
-        className="px-2 py-1 border rounded"
-        placeholder="Modifier"
-        value={localIngredient.modifier}
+        type="text"
+        value={ingredient.modifier}
         onChange={(e) => handleChange("modifier", e.target.value)}
+        placeholder="e.g., diced"
+        className="w-24 px-1 border border-gray-300 rounded"
       />
 
       <input
-        className="px-2 py-1 border rounded text-right"
-        placeholder="Cost"
-        value={localIngredient.cost}
+        type="number"
+        value={ingredient.cost}
         onChange={(e) => handleChange("cost", e.target.value)}
+        className="w-20 px-1 border border-gray-300 rounded text-right"
+        placeholder="Cost"
+        step="0.01"
       />
 
-      <div className="text-right text-gray-800">${lineCost}</div>
-
-      <div className="flex items-center space-x-1">
-        <input
-          type="checkbox"
-          checked={localIngredient.isSubrecipe || false}
-          onChange={(e) => handleChange("isSubrecipe", e.target.checked)}
-        />
-        <button
-          className="text-red-500 hover:text-red-700 text-xs"
-          onClick={() => removeIngredient(index)}
-        >
-          ✕
-        </button>
-      </div>
+      {/* Remove Button */}
+      <button
+        onClick={() => removeIngredient(index)}
+        className="text-gray-400 hover:text-red-600 text-sm"
+        title="Remove"
+      >
+        ❌
+      </button>
     </div>
   );
-};
+}
 
 export default IngredientRow;

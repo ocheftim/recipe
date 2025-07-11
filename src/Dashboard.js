@@ -1,5 +1,6 @@
 // Dashboard With Timestamps
 import Header from "./Header"; // or "./components/Header" if in a folder
+import RecipeCategoriesPanel from "./RecipeCategoriesPanel";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -15,7 +16,9 @@ function Dashboard() {
   const [selected, setSelected] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [ownerFilter, setOwnerFilter] = useState("All");
-
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(null);
+  
   const ownerOptions = ["All", "Personal", "First Concept"];
 
   useEffect(() => {
@@ -117,7 +120,20 @@ function Dashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 font-dm-sans">
+    <div className="relative">
+      <RecipeCategoriesPanel
+        isOpen={panelOpen}
+        setIsOpen={setPanelOpen}
+        activeCategory={activeCategory}
+        setActiveCategory={setActiveCategory}
+      />
+  
+      <div
+        className={`min-h-screen bg-gray-100 text-gray-900 font-dm-sans transition-all duration-300 ${
+          panelOpen ? "ml-64" : "ml-0"
+        }`}
+      >
+  
       {/* Header */}
       <Header currentPage="Recipes" />
 
@@ -125,43 +141,23 @@ function Dashboard() {
       <div className="bg-white border-b w-full">
         <div className="w-full max-w-screen-xl mx-auto flex items-center justify-between px-6 py-3">
           {/* Left: Filter */}
-          <div className="flex items-center gap-4">
-            <Listbox value={ownerFilter} onChange={setOwnerFilter}>
-              <div className="relative">
-                <Listbox.Button className="px-2 py-1 border rounded text-sm bg-white w-40 text-left flex justify-between items-center">
-                  <span>{ownerFilter}</span>
-                  <svg
-                    className="w-4 h-4 ml-2 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </Listbox.Button>
-                <Listbox.Options className="absolute mt-1 w-40 rounded-md bg-white border shadow-md z-10 text-sm">
-                  {ownerOptions.map((option) => (
-                    <Listbox.Option
-                      key={option}
-                      value={option}
-                      className={({ active }) =>
-                        `cursor-pointer px-3 py-1 ${active ? 'bg-gray-100' : ''}`
-                      }
-                    >
-                      {option}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
-              </div>
-            </Listbox>
-
-            <button
-              onClick={() => navigate("/recipe")}
-              className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
-            >
-              + New Recipe
-            </button>
-          </div>
+          <div className="flex items-center">
+  <button
+    onClick={() => setPanelOpen(true)}
+    className="p-1 rounded-md hover:bg-[#F1F1FE] transition"
+    title="Open Menu"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5 text-[#060841]"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  </button>
+</div>
 
           {/* Right: Search + Help */}
           <div className="flex items-center gap-3">
@@ -289,8 +285,9 @@ function Dashboard() {
     <p className="text-gray-500 text-sm">No recipes found.</p>
   )}
 </main>
-
-
+      </div>
+      {/* closes shifted dashboard content */}
+      {/* closes outer wrapper with panel */}
     </div>
   );
 }

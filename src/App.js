@@ -6,7 +6,7 @@ import Dashboard from "./Dashboard";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 font-satoshi">
+    <div className="min-h-screen bg-gray-100 text-gray-900 font-satoshi relative">
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/recipe" element={<RecipeEditor />} />

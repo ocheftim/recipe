@@ -2,6 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import IngredientManager from "./IngredientManager";
+import PrepInstructions from "./PrepInstructions";
+import RecipeDetailsModal from "./RecipeDetailsModal";
+import { db } from "./Firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { Edit, Copy, RefreshCcw, MoreVertical } from "lucide-react";
 
 function RecipeEditor() {
   const location = useLocation();
@@ -10,13 +15,15 @@ function RecipeEditor() {
   const initialTitle = searchParams.get("title") || "Untitled Recipe";
   const returnTo = searchParams.get("returnTo");
 
-  const [originalKey] = useState(initialTitle); // store the key for localStorage
+  const [originalKey] = useState(initialTitle);
   const [recipeTitle, setRecipeTitle] = useState(initialTitle);
   const [source, setSource] = useState("");
   const [ingredients, setIngredients] = useState([]);
   const [instructions, setInstructions] = useState([]);
   const [portions, setPortions] = useState(1);
   const [menuPrice, setMenuPrice] = useState(0);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const unitOptions = ["g", "kg", "oz", "lb", "cup", "tbsp", "tsp", "each"];
 
@@ -24,7 +31,7 @@ function RecipeEditor() {
   const subcategoryOptions = {
     "Dairy & Eggs": ["Milk", "Cheese", "Eggs"],
     Meat: ["Chicken", "Beef", "Pork"],
-    Produce: ["Leafy Greens", "Root Vegetables", "Fruits"]
+    Produce: ["Leafy Greens", "Root Vegetables", "Fruits"],
   };
 
   const ingredientOptions = [
@@ -32,7 +39,7 @@ function RecipeEditor() {
     { name: "Cheddar Cheese", category: "Dairy & Eggs", subcategory: "Cheese" },
     { name: "Spinach", category: "Produce", subcategory: "Leafy Greens" },
     { name: "Carrots", category: "Produce", subcategory: "Root Vegetables" },
-    { name: "Chicken Breast", category: "Meat", subcategory: "Chicken" }
+    { name: "Chicken Breast", category: "Meat", subcategory: "Chicken" },
   ];
 
   const createEmptyIngredient = () => ({
@@ -43,32 +50,32 @@ function RecipeEditor() {
     ingredient: "",
     modifier: "",
     cost: "",
-    isSubrecipe: false
+    isSubrecipe: false,
   });
 
-  const createEmptyInstruction = () => ({ title: "", detail: "" });
-
   useEffect(() => {
-    const saved = localStorage.getItem(originalKey);
-    if (saved) {
+    const fetchRecipe = async () => {
       try {
-        const data = JSON.parse(saved);
-        if (data && Array.isArray(data.ingredients)) {
-          setIngredients(data.ingredients);
+        const docRef = doc(db, "recipes", originalKey);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setIngredients(data.ingredients || []);
           setInstructions(data.instructions || []);
           setRecipeTitle(data.title || initialTitle);
+          setPortions(data.portions || 1);
+          setMenuPrice(data.menuPrice || 0);
+          setSource(data.source || "");
         } else {
           setIngredients([createEmptyIngredient()]);
           setInstructions([]);
         }
-      } catch {
-        setIngredients([createEmptyIngredient()]);
-        setInstructions([]);
+      } catch (error) {
+        console.error("Error loading recipe:", error);
       }
-    } else {
-      setIngredients([createEmptyIngredient()]);
-      setInstructions([]);
-    }
+    };
+
+    fetchRecipe();
   }, [originalKey]);
 
   const totalCost = ingredients.reduce((sum, ing) => {
@@ -82,29 +89,29 @@ function RecipeEditor() {
   const profitPerPortion = menuPrice - costPerPortion;
   const suggestedMenuPrice = costPerPortion > 0 ? (costPerPortion / 0.35).toFixed(2) : "0.00";
 
-  const saveRecipe = () => {
-    const recipe = {
-      title: recipeTitle,
-      ingredients,
-      instructions,
-      lastUpdated: new Date().toISOString()
-    };
-    localStorage.setItem(originalKey, JSON.stringify(recipe));
-    alert("Recipe saved!");
+  const handleUpdateDetails = (updated) => {
+    setRecipeTitle(updated.title);
+    setSource(updated.source);
+    setPortions(updated.portions);
+    setMenuPrice(updated.menuPrice);
   };
 
-  const updateInstruction = (index, field, value) => {
-    const updated = [...instructions];
-    updated[index][field] = value;
-    setInstructions(updated);
-  };
-
-  const addInstruction = () => {
-    setInstructions([...instructions, createEmptyInstruction()]);
-  };
-
-  const removeInstruction = (index) => {
-    setInstructions(instructions.filter((_, i) => i !== index));
+  const saveRecipe = async () => {
+    try {
+      const docRef = doc(db, "recipes", recipeTitle);
+      await setDoc(docRef, {
+        title: recipeTitle,
+        source,
+        ingredients,
+        instructions,
+        portions,
+        menuPrice,
+        lastUpdated: new Date().toISOString(),
+      });
+      alert("Recipe saved to Firestore!");
+    } catch (error) {
+      console.error("Error saving recipe:", error);
+    }
   };
 
   return (
@@ -123,47 +130,43 @@ function RecipeEditor() {
         </div>
       </header>
 
-      <main className="p-6 space-y-6">
-        <div className="flex items-start justify-start gap-6 w-full max-w-screen-xl mx-auto">
-          <div className="w-[600px] space-y-2">
-            <input
-              value={recipeTitle}
-              onChange={(e) => setRecipeTitle(e.target.value)}
-              className="text-2xl font-bold w-[600px] pl-4 border-b-2 focus:outline-none"
-            />
-            <input
-              type="text"
-              value={source}
-              onChange={(e) => setSource(e.target.value)}
-              placeholder="Source"
-              className="w-[300px] border px-2 py-1 rounded"
-            />
-            <div className="flex gap-6 pt-1">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Yield Portions</label>
-                <input
-                  type="number"
-                  value={portions}
-                  onChange={(e) => setPortions(parseInt(e.target.value) || 0)}
-                  className="w-[80px] border px-2 py-1 rounded"
-                  placeholder="Servings"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Menu Price</label>
-                <input
-                  type="number"
-                  value={menuPrice}
-                  onChange={(e) => setMenuPrice(parseFloat(e.target.value) || 0)}
-                  className="w-[100px] border px-2 py-1 rounded"
-                  placeholder="$"
-                />
+      <main className="p-6 max-w-screen-xl mx-auto">
+        <div className="bg-white p-6 rounded shadow divide-y divide-gray-200 text-sm">
+          <section className="pb-6 relative">
+            <div className="absolute top-0 right-0">
+              <div className="relative inline-block text-left">
+                <button
+                  onClick={() => setShowDropdown((prev) => !prev)}
+                  className="text-gray-500 hover:text-gray-700 transition text-xl"
+                  title="Options"
+                >
+                  <MoreVertical size={20} />
+                </button>
+                {showDropdown && (
+                  <div className="absolute right-0 mt-2 w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                    <div className="py-1 text-sm">
+                      <button
+                        onClick={() => {
+                          setShowDetailsModal(true);
+                          setShowDropdown(false);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 w-full text-left"
+                      >
+                        <Edit size={16} /> Edit Details
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
+            <h1 className="text-xl font-semibold">{recipeTitle}</h1>
+            <p><span className="font-medium text-gray-700">Source:</span> <em className="text-gray-500">{source || "No source"}</em></p>
+            <p><span className="font-medium text-gray-700">Yield:</span> {portions} portions</p>
+            <p><span className="font-medium text-gray-700">Menu Price:</span> <em className="text-gray-500">${menuPrice.toFixed(2)}</em></p>
+          </section>
 
-          <div className="w-[300px] bg-white border rounded p-4 shadow space-y-2 text-sm mt-2">
-            <h2 className="text-base font-semibold border-b pb-1">Recipe Costing</h2>
+          <section className="py-6">
+            <h2 className="text-base font-semibold pb-1">Recipe Costing</h2>
             <div className="flex justify-between">
               <span className="text-gray-600">Total Cost:</span>
               <span className="text-gray-900 font-medium">${totalCost.toFixed(2)}</span>
@@ -184,51 +187,30 @@ function RecipeEditor() {
               <span className="text-gray-600">Profit $:</span>
               <span className="text-gray-900 font-medium">${profitPerPortion.toFixed(2)}</span>
             </div>
+          </section>
+
+          <section className="py-6">
+            <IngredientManager ingredients={ingredients} setIngredients={setIngredients} />
+          </section>
+
+          <section className="py-6">
+            <PrepInstructions instructions={instructions} setInstructions={setInstructions} />
+          </section>
+
+          <div className="pt-6">
+            <button onClick={saveRecipe} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+              Save Recipe
+            </button>
           </div>
         </div>
 
-        <IngredientManager
-          ingredients={ingredients}
-          setIngredients={setIngredients}
-          createEmptyIngredient={createEmptyIngredient}
-          recipeTitle={recipeTitle}
-          unitOptions={unitOptions}
-          categoryOptions={categoryOptions}
-          subcategoryOptions={subcategoryOptions}
-          ingredientOptions={ingredientOptions}
-        />
-
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Instructions</h2>
-          {instructions.map((step, index) => (
-            <div key={index} className="space-y-1">
-              <input
-                type="text"
-                value={step.title}
-                onChange={(e) => updateInstruction(index, "title", e.target.value)}
-                placeholder={`Step ${index + 1} Title`}
-                className="w-full border px-2 py-1 rounded"
-              />
-              <textarea
-                value={step.detail}
-                onChange={(e) => updateInstruction(index, "detail", e.target.value)}
-                placeholder="Step details"
-                className="w-full border px-2 py-1 rounded"
-              />
-              <button onClick={() => removeInstruction(index)} className="text-red-600 text-sm">Remove</button>
-            </div>
-          ))}
-          <button onClick={addInstruction} className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
-            Add Step
-          </button>
-        </div>
-
-        <button
-          onClick={saveRecipe}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Save Recipe
-        </button>
+        {showDetailsModal && (
+          <RecipeDetailsModal
+            onClose={() => setShowDetailsModal(false)}
+            onSave={handleUpdateDetails}
+            initialData={{ title: recipeTitle, source, portions, menuPrice }}
+          />
+        )}
       </main>
     </div>
   );
