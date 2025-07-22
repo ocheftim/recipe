@@ -1,6 +1,7 @@
-// src/Firebase.js
+// src/firebase.js
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth"; // ADD THIS LINE
 
 console.log("Loaded ENV:", process.env.REACT_APP_API_KEY); // <- test visibility
 
@@ -14,4 +15,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
 export const db = getFirestore(app);
+export const auth = getAuth(app); // ADD THIS LINE
