@@ -1,8 +1,0 @@
-{
-    "vegetables": { "category": "Vegetables", "subcategories": ["Root Vegetables", "Leafy Greens", "Cruciferous", "Nightshades", "Alliums", "Squash/Gourds", "Pods/Seeds", "Mushrooms", "Sea Vegetables", "Sprouts", "Other"] },
-    "fruits": { "category": "Fruits", "subcategories": ["Citrus", "Berries", "Stone Fruits", "Tropical", "Apples/Pears", "Melons", "Grapes", "Dried Fruits", "Exotic Fruits", "Other"] },
-    "meat": { "category": "Meat", "subcategories": ["Beef", "Pork", "Lamb", "Veal", "Game Meat", "Organ Meat", "Cured Meat", "Sausages", "Ground Meat", "Other"] },
-    "poultry": { "category": "Poultry", "subcategories": ["Chicken", "Duck", "Turkey", "Goose", "Game Birds", "Quail", "Other"] },
-    "fishSeafood": { "category": "Fish/Seafood", "subcategories": ["Fresh Fish", "Saltwater Fish", "Freshwater Fish", "Shellfish", "Crustaceans", "Mollusks", "Cured/Smoked Fish", "Canned Fish", "Other"] },
-    "dairy": { "category": "Dairy", "subcategories": ["Milk", "Cream", "Butter", "Cheese - Fresh", "Cheese - Aged", "Cheese - Blue", "Yogurt", "Sour Cream", "Buttermilk", "Other"] }
-  }

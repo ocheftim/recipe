@@ -1,0 +1,245 @@
+// src/components/ingredients/PendingIngredientsAlert.js
+// Fixed version with correct THEME structure
+
+import React, { useState, useEffect } from 'react';
+import { AlertCircle, X, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+
+// Define THEME locally to match what's used in RecipeIngredientsEditor
+const THEME = {
+  primary: '#1F2D38',
+  secondary: '#6B7280',
+  background: '#FFFFFF',
+  lightBackground: '#FAFAFA',
+  accent: '#8AC732',
+  border: '#E5E7EB',
+  subtleBorder: '#F6F8F8',
+  statusActive: '#8AC732',
+  statusPending: '#F59E0B',
+  statusInactive: '#E5E7EB',
+  statusError: '#EF4444',
+  warning: '#F59E0B',
+  success: '#8AC732',
+  light: '#FAFAFA',
+  text: {
+    primary: '#1F2D38',
+    secondary: '#6B7280'
+  }
+};
+
+const PendingIngredientsAlert = ({ onAddIngredient }) => {
+  const [pendingIngredients, setPendingIngredients] = useState([]);
+  const [isVisible, setIsVisible] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  useEffect(() => {
+    // Load pending ingredients from localStorage
+    const loadPending = () => {
+      const pending = JSON.parse(localStorage.getItem('pendingIngredients') || '[]');
+      setPendingIngredients(pending);
+      
+      // Auto-expand if there are new pending ingredients
+      if (pending.length > 0) {
+        setIsVisible(true);
+      }
+    };
+    
+    // Initial load
+    loadPending();
+    
+    // Listen for storage changes (in case another tab updates)
+    window.addEventListener('storage', loadPending);
+    
+    // Also check periodically (every 5 seconds) for changes
+    const interval = setInterval(loadPending, 5000);
+    
+    return () => {
+      window.removeEventListener('storage', loadPending);
+      clearInterval(interval);
+    };
+  }, []);
+
+  const handleAddIngredient = (ingredientName) => {
+    // Call the parent's add function with pre-filled name
+    if (onAddIngredient) {
+      onAddIngredient(ingredientName);
+    }
+    
+    // Remove from pending list
+    const newPending = pendingIngredients.filter(ing => ing !== ingredientName);
+    setPendingIngredients(newPending);
+    localStorage.setItem('pendingIngredients', JSON.stringify(newPending));
+  };
+
+  const handleDismiss = (ingredientName) => {
+    const confirmDismiss = window.confirm(
+      `Are you sure you want to dismiss "${ingredientName}"?\n\n` +
+      `This ingredient won't be added to your database, and recipes using it won't have cost calculations.`
+    );
+    
+    if (confirmDismiss) {
+      const newPending = pendingIngredients.filter(ing => ing !== ingredientName);
+      setPendingIngredients(newPending);
+      localStorage.setItem('pendingIngredients', JSON.stringify(newPending));
+    }
+  };
+
+  const handleAddAll = () => {
+    const confirmAdd = window.confirm(
+      `This will add ${pendingIngredients.length} ingredient${pendingIngredients.length > 1 ? 's' : ''} to your database.\n\n` +
+      `You'll need to set costs and suppliers for each one. Continue?`
+    );
+    
+    if (confirmAdd) {
+      // Add all ingredients
+      pendingIngredients.forEach(ing => {
+        if (onAddIngredient) {
+          onAddIngredient(ing);
+        }
+      });
+      
+      // Clear the pending list
+      setPendingIngredients([]);
+      localStorage.setItem('pendingIngredients', JSON.stringify([]));
+    }
+  };
+
+  const handleDismissAll = () => {
+    const confirmDismissAll = window.confirm(
+      `Are you sure you want to dismiss all ${pendingIngredients.length} pending ingredient${pendingIngredients.length > 1 ? 's' : ''}?\n\n` +
+      `Recipes using these ingredients won't have cost calculations until the ingredients are added.`
+    );
+    
+    if (confirmDismissAll) {
+      setPendingIngredients([]);
+      localStorage.setItem('pendingIngredients', JSON.stringify([]));
+      setIsVisible(false);
+    }
+  };
+
+  // Don't render if no pending ingredients or not visible
+  if (pendingIngredients.length === 0 || !isVisible) return null;
+
+  return (
+    <div 
+      className="mb-4 rounded-lg shadow-sm"
+      style={{ 
+        backgroundColor: '#fffbf0',
+        border: `1px solid ${THEME.warning}`
+      }}
+    >
+      {/* Header */}
+      <div 
+        className="px-4 py-3"
+        style={{ 
+          borderBottom: `1px solid ${THEME.warning}`,
+          backgroundColor: '#fff9e6'
+        }}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <AlertCircle 
+              className="w-5 h-5 mr-2" 
+              style={{ color: THEME.warning }}
+            />
+            <h3 className="font-semibold" style={{ color: THEME.text.primary }}>
+              {pendingIngredients.length} New Ingredient{pendingIngredients.length > 1 ? 's' : ''} Need{pendingIngredients.length === 1 ? 's' : ''} to be Added
+            </h3>
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="ml-3 p-1 hover:bg-yellow-100 rounded transition-colors"
+              style={{ color: THEME.warning }}
+            >
+              {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
+          </div>
+          <button
+            onClick={() => setIsVisible(false)}
+            className="p-1 hover:bg-gray-100 rounded transition-colors"
+            style={{ color: THEME.text.secondary }}
+            title="Hide this alert"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      {isExpanded && (
+        <div className="p-4">
+          <p className="text-sm mb-4" style={{ color: THEME.text.secondary }}>
+            These ingredients were found in imported recipes but don't exist in your database. 
+            Add them to enable cost calculations for your recipes.
+          </p>
+
+          {/* Ingredient Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mb-4">
+            {pendingIngredients.map((ingredient, idx) => (
+              <div
+                key={idx}
+                className="flex items-center justify-between bg-white px-3 py-2 rounded transition-colors hover:shadow-sm"
+                style={{ 
+                  border: `1px solid ${THEME.border}`,
+                }}
+              >
+                <span 
+                  className="text-sm font-medium mr-2 truncate" 
+                  style={{ color: THEME.text.primary }}
+                  title={ingredient}
+                >
+                  {ingredient}
+                </span>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button
+                    onClick={() => handleAddIngredient(ingredient)}
+                    className="p-1 rounded transition-colors hover:bg-green-50"
+                    style={{ color: THEME.success }}
+                    title="Add this ingredient"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDismiss(ingredient)}
+                    className="p-1 rounded transition-colors hover:bg-gray-50"
+                    style={{ color: THEME.text.secondary }}
+                    title="Dismiss"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-2">
+            <button
+              onClick={handleAddAll}
+              className="px-4 py-2 text-white text-sm rounded hover:opacity-90 transition-opacity font-medium"
+              style={{ backgroundColor: THEME.primary }}
+            >
+              Add All Ingredients
+            </button>
+            <button
+              onClick={handleDismissAll}
+              className="px-4 py-2 text-sm rounded hover:bg-gray-200 transition-colors font-medium"
+              style={{ 
+                backgroundColor: THEME.light,
+                color: THEME.text.primary,
+                border: `1px solid ${THEME.border}`
+              }}
+            >
+              Dismiss All
+            </button>
+          </div>
+
+          {/* Help Text */}
+          <p className="text-xs mt-3" style={{ color: THEME.text.secondary }}>
+            Tip: After adding ingredients, remember to set their costs and suppliers for accurate recipe costing.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default PendingIngredientsAlert;

@@ -1,0 +1,228 @@
+// Temporary mock data - will be replaced with API calls in production
+// This file extracts ~400 lines from RecipePage.js
+
+export const sampleIngredients = [
+    { id: 1, name: 'Beef Chuck', apCost: 5.99, apUnit: 'lb', category: 'Protein' },
+    { id: 2, name: 'Chicken Breast', apCost: 3.99, apUnit: 'lb', category: 'Protein' },
+    { id: 3, name: 'Ground Beef 80/20', apCost: 4.99, apUnit: 'lb', category: 'Protein' },
+    { id: 4, name: 'Carrots', apCost: 1.29, apUnit: 'lb', category: 'Produce' },
+    { id: 5, name: 'Roma Tomatoes', apCost: 1.29, apUnit: 'lb', category: 'Produce' },
+    { id: 6, name: 'Potatoes', apCost: 0.69, apUnit: 'lb', category: 'Produce' },
+    { id: 7, name: 'Parmesan Cheese', apCost: 8.99, apUnit: 'lb', category: 'Dairy' },
+    { id: 8, name: 'Caesar Dressing', apCost: 2.49, apUnit: 'bottle', category: 'Condiments' },
+    { id: 9, name: 'Brioche Buns', apCost: 0.75, apUnit: 'each', category: 'Bakery' },
+    { id: 10, name: 'Yellow Onions', apCost: 0.89, apUnit: 'lb', category: 'Produce' },
+    { id: 11, name: 'Tomato Paste', apCost: 2.99, apUnit: 'lb', category: 'Canned' },
+    { id: 12, name: 'Beef Stock', apCost: 3.49, apUnit: 'quart', category: 'Stock' },
+    { id: 13, name: 'Chicken Stock', apCost: 2.99, apUnit: 'quart', category: 'Stock' },
+    { id: 14, name: 'Egg Noodles', apCost: 2.49, apUnit: 'lb', category: 'Pasta' },
+    { id: 15, name: 'Celery', apCost: 1.99, apUnit: 'lb', category: 'Produce' },
+    { id: 16, name: 'Gruyere Cheese', apCost: 12.99, apUnit: 'lb', category: 'Dairy' },
+    { id: 17, name: 'Baguette', apCost: 2.49, apUnit: 'each', category: 'Bakery' },
+    { id: 18, name: 'Arborio Rice', apCost: 3.99, apUnit: 'lb', category: 'Grains' },
+    { id: 19, name: 'Mixed Mushrooms', apCost: 4.99, apUnit: 'lb', category: 'Produce' },
+    { id: 20, name: 'Vegetable Stock', apCost: 2.49, apUnit: 'quart', category: 'Stock' },
+    { id: 21, name: 'Mixed Vegetables', apCost: 2.99, apUnit: 'lb', category: 'Produce' },
+    { id: 22, name: 'Jasmine Rice', apCost: 2.49, apUnit: 'lb', category: 'Grains' },
+    { id: 23, name: 'Soy Sauce', apCost: 3.99, apUnit: 'bottle', category: 'Condiments' },
+    { id: 24, name: 'Fresh Ginger', apCost: 3.99, apUnit: 'lb', category: 'Produce' },
+    { id: 25, name: 'Butter', apCost: 3.99, apUnit: 'lb', category: 'Dairy' }
+  ];
+  
+  export const recipeCategories = [
+    'Main', 'Side', 'App', 'Dessert', 'Salad', 'Soup', 'Sauce', 'Base', 'Beverage', 'Entree'
+  ];
+  
+  export const initialRecipes = [
+    {
+      id: 1,
+      name: 'Classic Beef Stew',
+      category: 'Entree',
+      cuisine: 'American',
+      outlet: 'Fine Dining',
+      yield: 8,
+      yieldUnit: 'servings',
+      costPerServing: 4.75,
+      menuPrice: 18.00,
+      foodCostPercent: 26.4,
+      dietary: '',
+      lastUpdated: '2025-08-31',
+      updated: new Date('2025-08-31T14:30:00'),
+      status: 'active',
+      description: 'Hearty beef stew with root vegetables in rich beef and chicken stock',
+      prepTime: 45,
+      cookTime: 120,
+      instructions: [
+        'Cut beef chuck into 2-inch cubes and season with salt and pepper',
+        'Brown beef in batches in Dutch oven with oil',
+        'Remove beef and sauté onions, carrots, and celery',
+        'Add tomato paste and cook for 2 minutes',
+        'Deglaze with red wine',
+        'Add beef stock, chicken stock, and herbs',
+        'Return beef to pot and simmer for 1.5 hours',
+        'Add potatoes and cook until tender',
+        'Adjust seasoning and thicken if desired'
+      ],
+      ingredients: [
+        { id: 1, ingredientId: 1, name: 'Beef Chuck', quantity: '3', unit: 'lb', apCost: 5.99, cost: 17.97 },
+        { id: 2, ingredientId: 12, name: 'Beef Stock', quantity: '2', unit: 'quart', apCost: 3.49, cost: 6.98 },
+        { id: 3, ingredientId: 13, name: 'Chicken Stock', quantity: '1', unit: 'quart', apCost: 2.99, cost: 2.99 },
+        { id: 4, ingredientId: 4, name: 'Carrots', quantity: '1', unit: 'lb', apCost: 1.29, cost: 1.29 },
+        { id: 5, ingredientId: 6, name: 'Potatoes', quantity: '2', unit: 'lb', apCost: 0.69, cost: 1.38 },
+        { id: 6, ingredientId: 10, name: 'Yellow Onions', quantity: '1', unit: 'lb', apCost: 0.89, cost: 0.89 },
+        { id: 7, ingredientId: 11, name: 'Tomato Paste', quantity: '0.25', unit: 'lb', apCost: 2.99, cost: 0.75 }
+      ]
+    },
+    {
+      id: 2,
+      name: 'Chicken Noodle Soup',
+      category: 'Soup',
+      cuisine: 'American',
+      outlet: 'Main Kitchen',
+      yield: 10,
+      yieldUnit: 'servings',
+      costPerServing: 2.25,
+      menuPrice: 9.00,
+      foodCostPercent: 25.0,
+      dietary: '',
+      lastUpdated: '2025-08-30',
+      updated: new Date('2025-08-30T11:15:00'),
+      status: 'active',
+      description: 'Classic comfort soup with tender chicken, vegetables, and egg noodles',
+      prepTime: 30,
+      cookTime: 60,
+      instructions: [
+        'Poach chicken breasts in chicken stock until cooked through',
+        'Remove chicken and shred when cool',
+        'Sauté onions, carrots, and celery in butter',
+        'Add garlic and cook for 1 minute',
+        'Pour in chicken stock and bring to simmer',
+        'Add egg noodles and cook until tender',
+        'Return shredded chicken to pot',
+        'Season with salt, pepper, and fresh herbs',
+        'Simmer for 10 minutes before serving'
+      ],
+      ingredients: [
+        { id: 1, ingredientId: 2, name: 'Chicken Breast', quantity: '2', unit: 'lb', apCost: 3.99, cost: 7.98 },
+        { id: 2, ingredientId: 13, name: 'Chicken Stock', quantity: '3', unit: 'quart', apCost: 2.99, cost: 8.97 },
+        { id: 3, ingredientId: 14, name: 'Egg Noodles', quantity: '1', unit: 'lb', apCost: 2.49, cost: 2.49 },
+        { id: 4, ingredientId: 4, name: 'Carrots', quantity: '0.5', unit: 'lb', apCost: 1.29, cost: 0.65 },
+        { id: 5, ingredientId: 15, name: 'Celery', quantity: '0.5', unit: 'lb', apCost: 1.99, cost: 1.00 },
+        { id: 6, ingredientId: 10, name: 'Yellow Onions', quantity: '0.5', unit: 'lb', apCost: 0.89, cost: 0.45 }
+      ]
+    },
+    {
+      id: 3,
+      name: 'French Onion Soup',
+      category: 'Soup',
+      cuisine: 'French',
+      outlet: 'Fine Dining',
+      yield: 6,
+      yieldUnit: 'servings',
+      costPerServing: 3.50,
+      menuPrice: 14.00,
+      foodCostPercent: 25.0,
+      dietary: '',
+      lastUpdated: '2025-08-29',
+      updated: new Date('2025-08-29T16:45:00'),
+      status: 'active',
+      description: 'Caramelized onions in rich beef stock topped with Gruyere cheese',
+      prepTime: 20,
+      cookTime: 90,
+      instructions: [
+        'Slice onions thinly and caramelize slowly in butter',
+        'Deglaze with sherry and white wine',
+        'Add beef stock and chicken stock',
+        'Simmer for 45 minutes with thyme and bay leaf',
+        'Season with salt and pepper',
+        'Ladle into oven-safe bowls',
+        'Top with baguette slices',
+        'Cover with Gruyere cheese',
+        'Broil until cheese is bubbly and golden'
+      ],
+      ingredients: [
+        { id: 1, ingredientId: 10, name: 'Yellow Onions', quantity: '3', unit: 'lb', apCost: 0.89, cost: 2.67 },
+        { id: 2, ingredientId: 12, name: 'Beef Stock', quantity: '2', unit: 'quart', apCost: 3.49, cost: 6.98 },
+        { id: 3, ingredientId: 13, name: 'Chicken Stock', quantity: '1', unit: 'quart', apCost: 2.99, cost: 2.99 },
+        { id: 4, ingredientId: 16, name: 'Gruyere Cheese', quantity: '0.75', unit: 'lb', apCost: 12.99, cost: 9.74 },
+        { id: 5, ingredientId: 17, name: 'Baguette', quantity: '1', unit: 'each', apCost: 2.49, cost: 2.49 },
+        { id: 6, ingredientId: 25, name: 'Butter', quantity: '0.25', unit: 'lb', apCost: 3.99, cost: 1.00 }
+      ]
+    },
+    {
+      id: 4,
+      name: 'Mushroom Risotto',
+      category: 'Side',
+      cuisine: 'Italian',
+      outlet: 'Main Kitchen',
+      yield: 6,
+      yieldUnit: 'servings',
+      costPerServing: 3.75,
+      menuPrice: 16.00,
+      foodCostPercent: 23.4,
+      dietary: 'Vegetarian',
+      lastUpdated: '2025-08-28',
+      updated: new Date('2025-08-28T10:20:00'),
+      status: 'active',
+      description: 'Creamy Arborio rice with porcini mushrooms and parmesan',
+      prepTime: 15,
+      cookTime: 35,
+      instructions: [
+        'Heat vegetable stock and chicken stock in separate pot',
+        'Sauté mushrooms in olive oil until golden',
+        'Remove mushrooms and sauté shallots',
+        'Add Arborio rice and toast for 2 minutes',
+        'Deglaze with white wine',
+        'Add warm stock one ladle at a time, stirring constantly',
+        'Continue until rice is creamy and al dente',
+        'Stir in mushrooms, butter, and parmesan',
+        'Finish with fresh herbs'
+      ],
+      ingredients: [
+        { id: 1, ingredientId: 18, name: 'Arborio Rice', quantity: '1', unit: 'lb', apCost: 3.99, cost: 3.99 },
+        { id: 2, ingredientId: 19, name: 'Mixed Mushrooms', quantity: '1', unit: 'lb', apCost: 4.99, cost: 4.99 },
+        { id: 3, ingredientId: 13, name: 'Chicken Stock', quantity: '1.5', unit: 'quart', apCost: 2.99, cost: 4.49 },
+        { id: 4, ingredientId: 20, name: 'Vegetable Stock', quantity: '1', unit: 'quart', apCost: 2.49, cost: 2.49 },
+        { id: 5, ingredientId: 7, name: 'Parmesan Cheese', quantity: '0.5', unit: 'lb', apCost: 8.99, cost: 4.50 },
+        { id: 6, ingredientId: 25, name: 'Butter', quantity: '0.25', unit: 'lb', apCost: 3.99, cost: 1.00 }
+      ]
+    },
+    {
+      id: 5,
+      name: 'Asian Chicken Stir-Fry',
+      category: 'Entree',
+      cuisine: 'Asian',
+      outlet: 'Main Kitchen',
+      yield: 4,
+      yieldUnit: 'servings',
+      costPerServing: 4.25,
+      menuPrice: 16.00,
+      foodCostPercent: 26.6,
+      dietary: '',
+      lastUpdated: '2025-08-27',
+      updated: new Date('2025-08-27T09:00:00'),
+      status: 'active',
+      description: 'Wok-fried chicken with vegetables in ginger-soy sauce',
+      prepTime: 20,
+      cookTime: 15,
+      instructions: [
+        'Marinate chicken in soy sauce, ginger, and garlic',
+        'Prepare sauce with soy, chicken stock, and cornstarch',
+        'Heat wok until smoking',
+        'Stir-fry chicken until golden',
+        'Remove chicken and stir-fry vegetables',
+        'Return chicken to wok',
+        'Add sauce and toss until thickened',
+        'Serve over jasmine rice',
+        'Garnish with sesame seeds and scallions'
+      ],
+      ingredients: [
+        { id: 1, ingredientId: 2, name: 'Chicken Breast', quantity: '1.5', unit: 'lb', apCost: 3.99, cost: 5.99 },
+        { id: 2, ingredientId: 21, name: 'Mixed Vegetables', quantity: '1', unit: 'lb', apCost: 2.99, cost: 2.99 },
+        { id: 3, ingredientId: 13, name: 'Chicken Stock', quantity: '0.5', unit: 'quart', apCost: 2.99, cost: 1.50 },
+        { id: 4, ingredientId: 22, name: 'Jasmine Rice', quantity: '1', unit: 'lb', apCost: 2.49, cost: 2.49 },
+        { id: 5, ingredientId: 23, name: 'Soy Sauce', quantity: '0.25', unit: 'bottle', apCost: 3.99, cost: 1.00 },
+        { id: 6, ingredientId: 24, name: 'Fresh Ginger', quantity: '0.25', unit: 'lb', apCost: 3.99, cost: 1.00 }
+      ]
+    }
+  ];

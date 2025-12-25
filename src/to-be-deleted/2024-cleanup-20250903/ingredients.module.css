@@ -1,0 +1,35 @@
+.unifiedControl {
+  height: 40px;
+  padding: 8px 16px;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+  white-space: nowrap; /* Fix: Keep text on one line */
+}
+
+.unifiedControl:hover {
+  border-color: #9CA3AF;
+  background-color: #F9FAFB;
+}
+
+/* Remove the green primary styling - make all buttons white */
+.unifiedPrimary {
+  background-color: #FFFFFF;
+  color: #374151;
+  border-color: #D1D5DB;
+}
+
+.unifiedPrimary:hover {
+  background-color: #F9FAFB;
+  border-color: #9CA3AF;
+}

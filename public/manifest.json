@@ -1,0 +1,22 @@
+{
+  "short_name": "ToqueWorks",
+  "name": "ToqueWorks - Professional Recipe Management",
+  "description": "A comprehensive recipe management system with cost analysis, inventory tracking, and menu planning for professional kitchens.",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#8AC732",
+  "background_color": "#FFFFFF",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "categories": ["productivity", "food", "business", "utilities"],
+  "prefer_related_applications": false,
+  "related_applications": []
+}
