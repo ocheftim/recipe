@@ -1,4 +1,6 @@
 {
+  "buildCommand": false,
+  "outputDirectory": "public",
   "redirects": [
     { "source": "/(.*)", "destination": "https://pcc-requisitions.vercel.app/$1", "permanent": true }
   ]
